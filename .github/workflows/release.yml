@@ -1,0 +1,33 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - v*
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+          cache: 'npm'
+
+      - name: Build
+        run: |
+          npm i
+          npm run build
+          cd dist
+          tar -cf dbox.tar.gz ./*
+        
+      - name: Upload Github Assets
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          files: dist/dbox.tar.gz
+          prerelease: ${{ contains(github.ref, '-') }}
