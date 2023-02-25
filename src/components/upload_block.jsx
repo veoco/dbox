@@ -144,7 +144,7 @@ function UploadBlock({ code, setCode }) {
           let file_token = raw.trim();
 
           let r = await fetch("/api/cards/detail", {
-            method: 'POST',
+            method: 'GET',
             headers: {
               'Content-Type': 'application/json',
               'Authorization': `Bearer ${file_token}`,
