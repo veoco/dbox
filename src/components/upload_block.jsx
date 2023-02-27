@@ -5,7 +5,7 @@ import sha256 from 'crypto-js/sha256';
 import FilesUpload from './files_upload';
 import { sizeFormat, mapErrorResult, blobToBuffer, blobToText } from '../utils';
 
-function UploadBlock({ code, setCode }) {
+export default function UploadBlock({ code, setCode }) {
   const [uploadFiles, setUploadFiles] = useState({});
   const [level, setLevel] = useState(1);
   const [token, setToken] = useState("");
@@ -220,5 +220,3 @@ function UploadBlock({ code, setCode }) {
     </div>
   )
 }
-
-export default UploadBlock;

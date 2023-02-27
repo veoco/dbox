@@ -1,4 +1,4 @@
-function NumPad({ code, setCode, setNavBlock }) {
+export default function NumPad({ code, setCode, setNavBlock }) {
   const codes = code.split('');
 
   const handleCopy = (e) => {
@@ -26,5 +26,3 @@ function NumPad({ code, setCode, setNavBlock }) {
     </div>
   )
 }
-
-export default NumPad;
