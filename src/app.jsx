@@ -44,7 +44,7 @@ function App() {
           <button type="button" className={"w-1/3" + (navBlock == 3 ? " bg-slate-100 border border-b-0 border-stone-800" : "")} onClick={e => { setNavBlock(3) }}>容量</button>
         </nav>
         {navBlock == 1 ? <NumKeys code={code} setCode={setCode} /> : ""}
-        {navBlock == 2 ? <UploadBlock code={code} setCode={setCode} /> : ""}
+        {navBlock == 2 ? <UploadBlock setCode={setCode} /> : ""}
         {navBlock == 3 ? <CountBlock /> : ""}
         {navBlock == 4 ? <FilesBlock code={code} /> : ""}
       </div>

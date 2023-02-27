@@ -5,7 +5,7 @@ import sha256 from 'crypto-js/sha256';
 import FilesUpload from './files_upload';
 import { sizeFormat, mapErrorResult, blobToBuffer, blobToText } from '../utils';
 
-export default function UploadBlock({ code, setCode }) {
+export default function UploadBlock({ setCode }) {
   const [uploadFiles, setUploadFiles] = useState({});
   const [level, setLevel] = useState(1);
   const [token, setToken] = useState("");
@@ -103,7 +103,7 @@ export default function UploadBlock({ code, setCode }) {
       }
 
       const data_sha256 = hasher.finalize().toString();
-      const data = { "sha256": data_sha256 };
+      const data = { "sha256": data_sha256, "extra": {} };
       const r = await fetch(`/api/files/${code}/${filename}`, {
         method: 'PATCH',
         headers: {
