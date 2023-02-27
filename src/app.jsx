@@ -9,20 +9,25 @@ import FilesBlock from './components/files_block';
 
 function App() {
   const [navBlock, setNavBlock] = useState(1);
-  let defaultCode = "DBOX2022";
-  if (window.location.hash && window.location.hash.length > 8){
-    let codes = /\d{8}/g.exec(window.location.hash)
-    if (codes && codes.length > 0) {
-      defaultCode = codes[0]
+  const [code, setCode] = useState("DBOX2022");
+
+  if (window.location.hash && window.location.hash.length > 0) {
+    let matches = /\d{8}/g.exec(window.location.hash)
+    if (matches && matches.length > 0) {
+      if (code == "DBOX2022") {
+        setCode(matches[0]);
+      }
     }
   }
-  const [code, setCode] = useState(defaultCode);
 
   const handlePaste = async (e) => {
     e.clipboardData.items[0].getAsString(input => {
-      const codes = /\d{8}/g.exec(input);
-      if (codes && codes.length > 0) {
-        setCode(codes[0])
+      const matches = /\d{8}/g.exec(input);
+      if (matches && matches.length > 0) {
+        const matchedCode = matches[0];
+        if (matchedCode != code) {
+          setCode(matchedCode);
+        }
       }
     });
   }
