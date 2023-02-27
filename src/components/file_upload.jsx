@@ -1,6 +1,6 @@
 import { sizeFormat } from "../utils";
 
-function FileUpload({ uploadFiles, setUploadFiles, item }) {
+export default function FileUpload({ uploadFiles, setUploadFiles, item }) {
   const handleClick = (e) => {
     const files = { ...uploadFiles };
     delete files[item.name]
@@ -17,5 +17,3 @@ function FileUpload({ uploadFiles, setUploadFiles, item }) {
     </div>
   )
 }
-
-export default FileUpload;
