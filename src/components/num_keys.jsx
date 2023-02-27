@@ -1,18 +1,18 @@
 import NumKey from "./num_key"
 
-function NumKeys({code, setCode}) {
-  const nums = ["1","2","3","4","5","6","7","8","9","0"];
+export default function NumKeys({ code, setCode }) {
+  const nums = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"];
 
   const handleClick = (e) => {
-    if (code == "FROM2022") {
+    if (code == "DBOX2022") {
       setCode("");
-    }else if (code.length > 0) {
-      setCode(code.slice(0, code.length-1));
-    } 
+    } else if (code.length > 0) {
+      setCode(code.slice(0, code.length - 1));
+    }
   }
   return (
     <div className="mt-2 grid grid-cols-3 gap-2">
-      {nums.map((item, i)=>{
+      {nums.map((item, i) => {
         return (
           <NumKey code={code} setCode={setCode} num={item} key={i} />
         )
@@ -21,5 +21,3 @@ function NumKeys({code, setCode}) {
     </div>
   )
 }
-
-export default NumKeys;

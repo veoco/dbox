@@ -1,4 +1,4 @@
-function NumKey({ code, setCode, num }) {
+export default function NumKey({ code, setCode, num }) {
   const handleClick = (e) => {
     if (code.length < 8) {
       setCode(code + num);
@@ -12,5 +12,3 @@ function NumKey({ code, setCode, num }) {
     </button>
   )
 }
-
-export default NumKey;
