@@ -55,7 +55,7 @@ export default function FilesUpload({ uploadFiles, setUploadFiles, maxCount }) {
           <FileUpload uploadFiles={uploadFiles} setUploadFiles={setUploadFiles} item={item} key={i} />
         )
       })}
-      {uploadFilesList.length < 5 ? <div className={'flex justify-center items-center text-slate-600 ' + (uploadFilesList.length == 0 ? 'h-64' : 'h-32')}>
+      {uploadFilesList.length < 5 ? <div className={'flex justify-center items-center text-slate-600 ' + (uploadFilesList.length == 0 ? 'h-64' : 'h-14')}>
         <span>拖拽文件到此或 <label htmlFor="fileInput" className="text-sky-500 cursor-pointer">点击选择文件</label></span>
       </div> : ""}
     </div>
