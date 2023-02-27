@@ -1,29 +1,20 @@
-import { useState, useEffect } from 'react'
+import useSWR from 'swr'
 
-function CountBlock({ code, setCode }) {
-  const [count, setCount] = useState(0);
+export default function CountBlock() {
+  const { data } = useSWR(`/api/files/capacity`);
+
+  let count = 0;
+  if (data) count = data.count;
+
   const blocks = [...Array(400)];
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const r = await fetch("/api/files/capacity");
-      if (r.ok) {
-        const res = await r.json();
-        setCount(res.count);
-      }
-    };
-    fetchData();
-  }, []);
 
   return (
     <ul className="mt-2 grid grid-cols-20 gap-1">
       {blocks.map((item, i) => {
         return (
-          <li className={"w-4 h-4 border border-slate-800" + (i < count ? " bg-sky-300" : " bg-white")}></li>
+          <li className={"w-4 h-4 border border-slate-800" + (i < count ? " bg-sky-300" : " bg-white")} key={i}></li>
         )
       })}
     </ul>
   )
 }
-
-export default CountBlock;

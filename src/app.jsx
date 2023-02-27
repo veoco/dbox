@@ -45,7 +45,7 @@ function App() {
         </nav>
         {navBlock == 1 ? <NumKeys code={code} setCode={setCode} /> : ""}
         {navBlock == 2 ? <UploadBlock code={code} setCode={setCode} /> : ""}
-        {navBlock == 3 ? <CountBlock code={code} setCode={setCode} /> : ""}
+        {navBlock == 3 ? <CountBlock /> : ""}
         {navBlock == 4 ? <FilesBlock code={code} setCode={setCode} setNavBlock={setNavBlock} /> : ""}
       </div>
       <div className='text-slate-400 text-xs text-center pt-8 sm:mt-auto pb-4'>
