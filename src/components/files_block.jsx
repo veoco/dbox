@@ -7,8 +7,20 @@ function FilesBlock({ code }) {
 
   if (error) return <div className="mt-2">加载失败</div>;
   if (isLoading) return <div className="mt-2">正在加载</div>;
+  console.log(error)
+  console.log(isLoading)
+  console.log(data)
+
+  if (!data.results) {
+    return (
+      <div className='mt-2'>
+        未找到
+      </div>
+    )
+  }
 
   const date = new Date(data.created * 1000 + 24 * 3600 * 1000);
+
   return (
     <div className='mt-2'>
       <p>过期时间 {date.toLocaleString()}</p>
