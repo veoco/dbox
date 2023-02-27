@@ -1,3 +1,5 @@
+import useSWR from 'swr'
+
 import { sizeFormat } from "../utils";
 
 function FilesBlock({ code }) {
