@@ -7,9 +7,6 @@ function FilesBlock({ code }) {
 
   if (error) return <div className="mt-2">加载失败</div>;
   if (isLoading) return <div className="mt-2">正在加载</div>;
-  console.log(error)
-  console.log(isLoading)
-  console.log(data)
 
   if (!data.results) {
     return (
