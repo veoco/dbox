@@ -1,4 +1,4 @@
-import { useState } from 'fre'
+import { useState } from 'react'
 import CryptoJS from 'crypto-js';
 import sha256 from 'crypto-js/sha256';
 

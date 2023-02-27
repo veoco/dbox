@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'fre'
+import { useState, useEffect } from 'react'
 
 function CountBlock({ code, setCode }) {
   const [count, setCount] = useState(0);

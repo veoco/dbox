@@ -1,14 +1,9 @@
 import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  esbuild: {
-    jsxFactory: 'h',
-    jsxFragment: 'Fragment',
-    jsxInject: `import { h, Fragment } from 'fre'`,
-    target: 'es2020',
-    format: 'esm'
-  },
+  plugins: [react()],
   server: {
     host: "127.0.0.1",
     proxy: {

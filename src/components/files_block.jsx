@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'fre'
+import { useState, useEffect } from 'react'
 
 import { sizeFormat } from "../utils";
 
