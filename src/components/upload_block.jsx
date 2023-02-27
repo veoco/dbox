@@ -18,7 +18,7 @@ export default function UploadBlock({ code, setCode }) {
   }
 
   const maxCount = 5;
-  const maxSize = level == 1 ? 100 * 1024 * 1024 : 1024 * 1024 * 1024;
+  const maxSize = level == 1 ? 100 * 1000 * 1000 : 1000 * 1000 * 1000;
   const canUpload = (0 < filesCount && filesCount <= maxCount && 0 < filesSize && filesSize < maxSize);
 
   const handleUpload = async (e) => {
