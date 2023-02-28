@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import CryptoJS from 'crypto-js';
 import sha256 from 'crypto-js/sha256';
+import md5 from 'crypto-js/md5'
 
 import FilesUpload from './files_upload';
 import { sizeFormat, mapErrorResult, blobToBuffer, blobToText } from '../utils';
@@ -48,50 +49,157 @@ export default function UploadBlock({ setCode }) {
     }
     const res = await box_r.json();
     const code = res.code;
+    const storage = res.storage
+    const uploads = res.uploads
     const blockSize = 10 * 1024 * 1024;
 
-    for (let f of Object.values(uploadFiles)) {
-      const filename = f.name;
-      let filesize = f.size;
+    if (storage == "filesystem") {
+      for (let f of Object.values(uploadFiles)) {
+        const filename = f.name;
+        let filesize = f.size;
 
-      let offset = 0;
-      let positions = [];
-      while (filesize > 0) {
-        positions.push(offset)
-        filesize -= blockSize;
-        offset += blockSize;
-      }
-      if (filesize == 0) {
-        positions.pop()
-      }
-
-      let hasher = CryptoJS.algo.SHA256.create()
-      let progress = 1;
-      for (let pos of positions) {
-        e.target.textContent = `正在上传 ${filename} 的 ${progress}/${positions.length}`;
-        let end;
-        if ((pos + blockSize) <= f.size) {
-          end = pos + blockSize;
-        } else {
-          end = f.size
+        let offset = 0;
+        let positions = [];
+        while (filesize > 0) {
+          positions.push(offset)
+          filesize -= blockSize;
+          offset += blockSize;
+        }
+        if (filesize == 0) {
+          positions.pop()
         }
 
-        let chunk = f.slice(pos, end);
+        let hasher = CryptoJS.algo.SHA256.create()
+        let progress = 1;
+        for (let pos of positions) {
+          e.target.textContent = `正在上传 ${filename} 的 ${progress}/${positions.length}`;
+          let end;
+          if ((pos + blockSize) <= f.size) {
+            end = pos + blockSize;
+          } else {
+            end = f.size
+          }
 
-        let buffer = await blobToBuffer(chunk);
-        let wordArray = CryptoJS.lib.WordArray.create(buffer);
+          let chunk = f.slice(pos, end);
 
-        hasher.update(wordArray);
-        let hash = sha256(wordArray).toString();
+          let buffer = await blobToBuffer(chunk);
+          let wordArray = CryptoJS.lib.WordArray.create(buffer);
 
-        const formData = new FormData();
-        formData.append("offset", pos);
-        formData.append("sha256", hash);
-        formData.append("file", chunk, filename);
+          hasher.update(wordArray);
+          let hash = sha256(wordArray).toString();
 
+          const formData = new FormData();
+          formData.append("offset", pos);
+          formData.append("sha256", hash);
+          formData.append("file", chunk, filename);
+
+          const r = await fetch(`/api/files/${code}/${filename}`, {
+            method: 'POST',
+            body: formData
+          })
+          if (!r.ok) {
+            await mapErrorResult(r);
+            e.target.textContent = "寄件";
+            e.target.disabled = false;
+            return;
+          }
+          progress += 1;
+        }
+
+        const data_sha256 = hasher.finalize().toString();
+        const data = { "sha256": data_sha256, "extra": {} };
         const r = await fetch(`/api/files/${code}/${filename}`, {
-          method: 'POST',
-          body: formData
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        })
+        if (!r.ok) {
+          await mapErrorResult(box_r);
+          e.target.textContent = "寄件";
+          e.target.disabled = false;
+          return;
+        }
+      }
+
+      const r = await fetch(`/api/files/${code}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      if (!r.ok) {
+        await mapErrorResult(box_r);
+        return;
+      }
+      setCode(`${code}`);
+    } else if (storage == "s3remote") {
+      for (let f of Object.values(uploadFiles)) {
+        const filename = f.name;
+        let filesize = f.size;
+        const uploadUrls = uploads[filename]
+
+        let offset = 0;
+        let positions = [];
+        while (filesize > 0) {
+          positions.push(offset)
+          filesize -= blockSize;
+          offset += blockSize;
+        }
+        if (filesize == 0) {
+          positions.pop()
+        }
+
+        let progress = 1;
+        const parts = [];
+        for (let pos of positions) {
+          e.target.textContent = `正在上传 ${filename} 的 ${progress}/${positions.length}`;
+          let end;
+          if ((pos + blockSize) <= f.size) {
+            end = pos + blockSize;
+          } else {
+            end = f.size
+          }
+
+          let chunk = f.slice(pos, end);
+
+          let buffer = await blobToBuffer(chunk);
+          let wordArray = CryptoJS.lib.WordArray.create(buffer);
+
+          let hash = md5(wordArray).toString();
+          const r = await fetch(uploadUrls[progress-1], {
+            method: 'PUT',
+            body: buffer
+          })
+          if (!r.ok) {
+            await mapErrorResult(r);
+            e.target.textContent = "寄件";
+            e.target.disabled = false;
+            return;
+          }
+          const etag = r.headers.get("ETag").slice(1, -1);
+          if (etag != hash) {
+            alert("文件上传失败")
+            e.target.textContent = "寄件";
+            e.target.disabled = false;
+            return;
+          }
+          parts.push({ "ETag": etag, "PartNumber": progress })
+          progress += 1;
+        }
+
+        const uploadUrl = uploadUrls[0];
+        const matches = /uploadId=(.+?)&/g.exec(uploadUrl)
+        const uploadId = matches[1];
+
+        const data = { "sha256": "", "extra": { "Parts": parts, "UploadId": uploadId } };
+        const r = await fetch(`/api/files/${code}/${filename}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
         })
         if (!r.ok) {
           await mapErrorResult(r);
@@ -99,37 +207,21 @@ export default function UploadBlock({ setCode }) {
           e.target.disabled = false;
           return;
         }
-        progress += 1;
       }
 
-      const data_sha256 = hasher.finalize().toString();
-      const data = { "sha256": data_sha256, "extra": {} };
-      const r = await fetch(`/api/files/${code}/${filename}`, {
+      const r = await fetch(`/api/files/${code}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
+        }
       })
       if (!r.ok) {
         await mapErrorResult(box_r);
-        e.target.textContent = "寄件";
-        e.target.disabled = false;
         return;
       }
+      setCode(`${code}`);
     }
 
-    const r = await fetch(`/api/files/${code}`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-    if (!r.ok) {
-      await mapErrorResult(box_r);
-      return;
-    }
-    setCode(`${code}`);
     e.target.textContent = "寄件";
     e.target.disabled = false;
   }
