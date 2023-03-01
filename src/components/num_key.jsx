@@ -2,7 +2,7 @@ export default function NumKey({ code, setCode, num }) {
   const handleClick = (e) => {
     if (code.length < 8) {
       setCode(code + num);
-    } else if (code == "DBOX2022") {
+    } else if (code == "________") {
       setCode(num);
     }
   }

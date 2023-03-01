@@ -2,7 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { SWRConfig } from 'swr'
 
-import App from './app'
+import { App } from './app'
 import './index.css'
 
 ReactDOM.createRoot(document.getElementById('app')).render(

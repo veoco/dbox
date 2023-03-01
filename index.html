@@ -3,7 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>DBox</title>
+    <title>{{ settings.SITE_TITLE }}</title>
+    <script id="settings-data" type="application/json">{"maxCount":{{ settings.FILE_MAX_COUNT }},"maxSize":{{ settings.FILE_MAX_SIZE }},"vipMaxCount":{{ settings.FILE_RED_MAX_COUNT }},"vipMaxSize":{{ settings.FILE_RED_MAX_SIZE }}}</script>
   </head>
   <body>
     <div id="app"></div>

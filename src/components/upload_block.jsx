@@ -1,12 +1,14 @@
-import { useState } from 'react'
+import { useState, useContext } from 'react'
 import CryptoJS from 'crypto-js';
 import sha256 from 'crypto-js/sha256';
 import md5 from 'crypto-js/md5'
 
+import { AppSettings } from '../app';
 import FilesUpload from './files_upload';
 import { sizeFormat, mapErrorResult, blobToBuffer, blobToText } from '../utils';
 
 export default function UploadBlock({ setCode }) {
+  const settings = useContext(AppSettings);
   const [uploadFiles, setUploadFiles] = useState({});
   const [level, setLevel] = useState(1);
   const [token, setToken] = useState("");
@@ -18,8 +20,8 @@ export default function UploadBlock({ setCode }) {
     filesCount += 1;
   }
 
-  const maxCount = 5;
-  const maxSize = level == 1 ? 100 * 1000 * 1000 : 1000 * 1000 * 1000;
+  const maxCount = level == 1 ? settings.maxCount : settings.vipMaxCount;
+  const maxSize = level == 1 ? settings.maxSize : settings.vipMaxSize;
   const canUpload = (0 < filesCount && filesCount <= maxCount && 0 < filesSize && filesSize < maxSize);
 
   const handleUpload = async (e) => {
@@ -168,7 +170,7 @@ export default function UploadBlock({ setCode }) {
           let wordArray = CryptoJS.lib.WordArray.create(buffer);
 
           let hash = md5(wordArray).toString();
-          const r = await fetch(uploadUrls[progress-1], {
+          const r = await fetch(uploadUrls[progress - 1], {
             method: 'PUT',
             body: buffer
           })

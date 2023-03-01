@@ -4,7 +4,7 @@ export default function NumKeys({ code, setCode }) {
   const nums = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"];
 
   const handleClick = (e) => {
-    if (code == "DBOX2022") {
+    if (code == "________") {
       setCode("");
     } else if (code.length > 0) {
       setCode(code.slice(0, code.length - 1));
